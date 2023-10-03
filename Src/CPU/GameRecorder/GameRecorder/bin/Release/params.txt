@@ -1,6 +1,6 @@
 // audio device
-@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{440DF7E1-7281-4516-A456-81CD57A81DCB}
+@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{86F7DE3D-22FB-4AE1-A537-262D25DCBE53}
 // Enable EchoBoost
-True
+False
 //Capture device is first device
 True
