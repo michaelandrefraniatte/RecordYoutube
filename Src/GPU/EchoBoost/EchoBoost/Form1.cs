@@ -52,7 +52,9 @@ namespace EchoBoost
                     break;
             }
             waveOut = new WasapiOut(wasapi, AudioClientShareMode.Exclusive, false, 2);
-            waveProvider = new BufferedWaveProvider(waveOut.OutputWaveFormat);
+            waveProvider = new BufferedWaveProvider(waveOut.OutputWaveFormat); 
+            waveProvider.DiscardOnBufferOverflow = true;
+            waveProvider.BufferDuration = TimeSpan.FromMilliseconds(80);
             waveOut.Init(waveProvider);
             waveOut.Play();
             waveIn = new WasapiLoopbackCapture();
@@ -61,12 +63,7 @@ namespace EchoBoost
         }
         private void waveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
-            if (e.BytesRecorded > 0 & waveProvider != null)
-            {
-                byte[] rawdata = new byte[e.BytesRecorded];
-                Array.Copy(e.Buffer, 0, rawdata, 0, e.BytesRecorded);
-                waveProvider.AddSamples(rawdata, 0, rawdata.Length);
-            }
+            waveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
         }
         private void TrayMenuContext()
         {

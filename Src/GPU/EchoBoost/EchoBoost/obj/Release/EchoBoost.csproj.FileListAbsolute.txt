@@ -76,3 +76,15 @@ C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\GPU\EchoBoost\EchoB
 C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.csproj.CopyComplete
 C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.exe
 C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.pdb
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\bin\Release\EchoBoost.exe.config
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\bin\Release\EchoBoost.exe
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\bin\Release\EchoBoost.pdb
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\bin\Release\NAudio.xml
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.csproj.AssemblyReference.cache
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.Form1.resources
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.Properties.Resources.resources
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.csproj.GenerateResource.cache
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.csproj.CoreCompileInputs.cache
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.csproj.Up2Date
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.exe
+C:\Users\micha\Documents\github\RecordYoutube\Src\GPU\EchoBoost\EchoBoost\obj\Release\EchoBoost.pdb
