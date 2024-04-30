@@ -21,3 +21,10 @@ C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\CPU\GameRecorder\Ga
 C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\CPU\GameRecorder\GameRecorder\obj\Release\GameRecorder.csproj.CoreCompileInputs.cache
 C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\CPU\GameRecorder\GameRecorder\obj\Release\GameRecorder.exe
 C:\Users\micha\Documents\Perso\tool\ffmpeg-cmd-recording\Src\CPU\GameRecorder\GameRecorder\obj\Release\GameRecorder.pdb
+C:\Users\micha\Documents\github\RecordYoutube\Src\CPU\GameRecorder\GameRecorder\bin\Release\GameRecorder.exe.config
+C:\Users\micha\Documents\github\RecordYoutube\Src\CPU\GameRecorder\GameRecorder\bin\Release\GameRecorder.exe
+C:\Users\micha\Documents\github\RecordYoutube\Src\CPU\GameRecorder\GameRecorder\bin\Release\GameRecorder.pdb
+C:\Users\micha\Documents\github\RecordYoutube\Src\CPU\GameRecorder\GameRecorder\obj\Release\GameRecorder.csproj.AssemblyReference.cache
+C:\Users\micha\Documents\github\RecordYoutube\Src\CPU\GameRecorder\GameRecorder\obj\Release\GameRecorder.csproj.CoreCompileInputs.cache
+C:\Users\micha\Documents\github\RecordYoutube\Src\CPU\GameRecorder\GameRecorder\obj\Release\GameRecorder.exe
+C:\Users\micha\Documents\github\RecordYoutube\Src\CPU\GameRecorder\GameRecorder\obj\Release\GameRecorder.pdb
