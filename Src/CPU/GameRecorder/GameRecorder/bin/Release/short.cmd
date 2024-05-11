@@ -1,0 +1,1 @@
+ffmpeg -i output.mp4 -vf crop=ih*(9/16):ih short.mp4
