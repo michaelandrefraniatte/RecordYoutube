@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Channels;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 namespace EchoBoost
 {
     public partial class Form1 : Form
@@ -63,13 +65,13 @@ namespace EchoBoost
                             if (!capturedevicefirst)
                                 break;
                         }
+                        waveIn = new WasapiLoopbackCapture();
                         waveOut = new WasapiOut(wasapi, AudioClientShareMode.Exclusive, false, 2);
-                        waveProvider = new BufferedWaveProvider(waveOut.OutputWaveFormat);
+                        waveProvider = new BufferedWaveProvider(WaveFormat.CreateCustomFormat(waveIn.WaveFormat.Encoding, waveIn.WaveFormat.SampleRate, waveIn.WaveFormat.Channels, waveIn.WaveFormat.AverageBytesPerSecond, waveIn.WaveFormat.BlockAlign, waveIn.WaveFormat.BitsPerSample));
                         waveProvider.DiscardOnBufferOverflow = true;
                         waveProvider.BufferDuration = TimeSpan.FromMilliseconds(80);
                         waveOut.Init(waveProvider);
                         waveOut.Play();
-                        waveIn = new WasapiLoopbackCapture();
                         waveIn.DataAvailable += waveIn_DataAvailable;
                         waveIn.StartRecording();
                         ison = true;
