@@ -1,0 +1,1 @@
+ffmpeg -i input.mp4 -vf scale=3840:2160:flags=neighbor -b:v 15M output.mp4
