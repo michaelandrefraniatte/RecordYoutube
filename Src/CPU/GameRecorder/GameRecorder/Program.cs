@@ -108,7 +108,7 @@ namespace GameRecorder
                 {
                     string localDate = DateTime.Now.ToString();
                     string name = localDate.Replace(" ", "-").Replace("/", "-").Replace(":", "-");
-                    output = name + ".avi";
+                    output = name + ".mkv";
                     startInfo = new ProcessStartInfo();
                     startInfo.CreateNoWindow = false;
                     startInfo.UseShellExecute = false;
