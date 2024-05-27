@@ -39,7 +39,7 @@ namespace GameRecorder
         const Int32 SW_MINIMIZE = 6;
         static ConsoleEventDelegate handler;
         private delegate bool ConsoleEventDelegate(int eventType);
-        private static string audiodevice, output, BITRATE, BITRATEx2;
+        private static string audiodevice, output;
         private static bool Getstate;
         private static Process process;
         private static ProcessStartInfo startInfo;
@@ -84,10 +84,6 @@ namespace GameRecorder
                     createdfile.ReadLine();
                     audiodevice = createdfile.ReadLine();
                     createdfile.ReadLine();
-                    BITRATE = createdfile.ReadLine();
-                    createdfile.ReadLine();
-                    BITRATEx2 = createdfile.ReadLine();
-                    createdfile.ReadLine();
                     echoboostenable = bool.Parse(createdfile.ReadLine());
                 }
                 if (echoboostenable)
@@ -121,7 +117,7 @@ namespace GameRecorder
                     startInfo.RedirectStandardInput = true;
                     startInfo.RedirectStandardOutput = true;
                     startInfo.FileName = "ffmpeg.exe";
-                    startInfo.Arguments = @"-f gdigrab -i desktop -f dshow -i audio=" + audiodevice + " -c:v h264_nvenc -preset p7 -b:v " + BITRATE + " -c:a aac -b:a 256k -bufsize " + BITRATEx2 + " " + output; 
+                    startInfo.Arguments = @"-init_hw_device d3d11va -filter_complex ddagrab=0 -f dshow -i audio=" + audiodevice + " -c:v h264_nvenc -cq:v 20 " + output;
                     try
                     {
                         process = Process.Start(startInfo);

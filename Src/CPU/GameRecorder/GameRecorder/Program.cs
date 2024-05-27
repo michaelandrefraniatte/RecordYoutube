@@ -115,7 +115,7 @@ namespace GameRecorder
                     startInfo.RedirectStandardInput = true;
                     startInfo.RedirectStandardOutput = true;
                     startInfo.FileName = "ffmpeg.exe";
-                    startInfo.Arguments = @"-f gdigrab -i desktop -f dshow -i audio=" + audiodevice + " -c:v libx264 -pix_fmt yuv420p -preset ultrafast -c:a aac -b:a 256k " + output;
+                    startInfo.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -f dshow -i audio=" + audiodevice + " -c:v libx264 -crf 20 " + output;
                     try
                     {
                         process = Process.Start(startInfo);
