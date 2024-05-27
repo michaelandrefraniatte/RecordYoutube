@@ -1,1 +1,1 @@
-ffmpeg -ss 00:01:00 -to 00:02:00 -i input.mp4 -c copy output.mp4
+ffmpeg -ss 00:04:51 -to 00:05:50 -i output.mp4 -c copy outputcrop.mp4

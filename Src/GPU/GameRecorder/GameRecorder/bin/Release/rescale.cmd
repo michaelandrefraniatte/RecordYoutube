@@ -1,1 +1,1 @@
-ffmpeg -i input.mp4 -vf scale=3840:2160:flags=neighbor -b:v 15M output.mp4
+ffmpeg -i outputcrop.mp4 -vf scale=1912:1080:flags=neighbor -b:v 15M outputrescale.mp4
