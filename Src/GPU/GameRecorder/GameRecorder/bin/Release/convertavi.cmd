@@ -1,1 +1,0 @@
-ffmpeg -i output.avi -c:v copy -c:a copy output.mp4
