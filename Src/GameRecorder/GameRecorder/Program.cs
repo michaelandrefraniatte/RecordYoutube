@@ -4,12 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
-using CSCore.SoundIn;
-using CSCore.Codecs.WAV;
 using System.IO;
-using NAudio.Wave;
-using WasapiLoopbackCapture = CSCore.SoundIn.WasapiLoopbackCapture;
-using CSCore.SoundOut;
 
 namespace GameRecorder
 {
@@ -33,7 +28,7 @@ namespace GameRecorder
         [DllImport("ntdll.dll", EntryPoint = "NtSetTimerResolution")]
         public static extern void NtSetTimerResolution(uint DesiredResolution, bool SetResolution, ref uint CurrentResolution);
         [DllImport("user32.dll")]
-        public static extern bool GetAsyncKeyState(System.Windows.Forms.Keys vKey);
+        public static extern bool GetAsyncKeyState(Keys vKey);
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
@@ -48,8 +43,8 @@ namespace GameRecorder
         private static bool capturing;
         private static Process processcapture;
         private static ProcessStartInfo startinfocapture, startinfomerge;
-        private static MediaFoundationReader audioFileReader;
-        private static IWavePlayer waveOutDevice;
+        private static NAudio.Wave.MediaFoundationReader audioFileReader;
+        private static NAudio.Wave.IWavePlayer waveOutDevice;
         public static ThreadStart threadstart;
         public static Thread thread;
         public static uint CurrentResolution = 0;
@@ -85,7 +80,7 @@ namespace GameRecorder
             SetConsoleCtrlHandler(handler, true);
             if (!AlreadyRunning())
             {
-                using (System.IO.StreamReader createdfile = new System.IO.StreamReader("params.txt"))
+                using (StreamReader createdfile = new StreamReader("params.txt"))
                 {
                     createdfile.ReadLine();
                     cpuorgpu = createdfile.ReadLine();
@@ -110,7 +105,7 @@ namespace GameRecorder
                 valchanged(1, GetAsyncKeyState(Keys.Decimal));
                 if (wd[1] == 1 & !capturing)
                 {
-                    audioFileReader = new MediaFoundationReader("1-hour-and-20-minutes-of-silence.mp3");
+                    audioFileReader = new NAudio.Wave.MediaFoundationReader("1-hour-and-20-minutes-of-silence.mp3");
                     waveOutDevice = new NAudio.Wave.WaveOut();
                     waveOutDevice.Init(audioFileReader);
                     waveOutDevice.Play();
@@ -143,9 +138,9 @@ namespace GameRecorder
                     });
                     Task.Run(() =>
                     {
-                        WasapiCapture capture = new WasapiLoopbackCapture();
+                        CSCore.SoundIn.WasapiCapture capture = new CSCore.SoundIn.WasapiLoopbackCapture();
                         capture.Initialize();
-                        WaveWriter wavewriter = new WaveWriter(outputaudio, capture.WaveFormat);
+                        CSCore.Codecs.WAV.WaveWriter wavewriter = new CSCore.Codecs.WAV.WaveWriter(outputaudio, capture.WaveFormat);
                         capture.DataAvailable += (sound, card) =>
                         {
                             wavewriter.Write(card.Data, card.Offset, card.ByteCount);
