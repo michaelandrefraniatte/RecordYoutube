@@ -1,4 +1,4 @@
 // Use CPU or GPU
-GPU
+CPU
 // Audio delay
 0
