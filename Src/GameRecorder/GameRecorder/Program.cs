@@ -124,18 +124,16 @@ namespace GameRecorder
                         startinfocapture.RedirectStandardOutput = true;
                         startinfocapture.FileName = "ffmpeg.exe";
                         if (cpuorgpu == "CPU")
-                            startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -crf 20 " + outputvideo;
+                            startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -crf 20 -ss 5 " + outputvideo;
                         if (cpuorgpu == "GPU")
-                            startinfocapture.Arguments = @"-init_hw_device d3d11va -filter_complex ddagrab=0 -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -cq:v 20 " + outputvideo;
+                            startinfocapture.Arguments = @"-init_hw_device d3d11va -filter_complex ddagrab=0 -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -cq:v 20 -ss 5 " + outputvideo;
                         try
                         {
                             processcapture = Process.Start(startinfocapture);
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                        catch { }
                     });
+                    Thread.Sleep(5000);
                     Task.Run(() =>
                     {
                         CSCore.SoundIn.WasapiCapture capture = new CSCore.SoundIn.WasapiLoopbackCapture();
@@ -170,10 +168,7 @@ namespace GameRecorder
                             {
                                 processcapture.StandardInput.WriteLine('q');
                             }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                            }
+                            catch { }
                         });
                         Task.Run(() =>
                         {
@@ -221,10 +216,7 @@ namespace GameRecorder
                 {
                     processcapture.StandardInput.WriteLine('q');
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                catch { }
                 Thread.Sleep(5000);
                 startinfomerge = new ProcessStartInfo();
                 startinfomerge.CreateNoWindow = true;
