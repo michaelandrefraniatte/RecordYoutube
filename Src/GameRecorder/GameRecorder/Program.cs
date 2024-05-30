@@ -146,9 +146,9 @@ namespace GameRecorder
             startinfocapture.RedirectStandardOutput = true;
             startinfocapture.FileName = "ffmpeg.exe";
             if (cpuorgpu == "CPU")
-                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 " + outputvideo;
+                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -rc-lookahead:v 0 -delay:v 0 -b:v 0 -cq:v 19 -zerolatency:v 1 " + outputvideo;
             if (cpuorgpu == "GPU")
-                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc " + outputvideo;
+                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -rc-lookahead:v 0 -delay:v 0 -b:v 0 -cq:v 19 -zerolatency:v 1 " + outputvideo;
             Task.Run(() => processcapture = Process.Start(startinfocapture));
             Wait(Convert.ToInt32(audiodelay));
             Task.Run(() => capture.Start());
