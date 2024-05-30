@@ -147,8 +147,8 @@ namespace GameRecorder
             {
                 wavewriter.Write(card.Data, card.Offset, card.ByteCount);
             };
-            processcapture = Process.Start(startinfocapture);
-            Thread.Sleep(5000);
+            Task.Run(() => processcapture = Process.Start(startinfocapture));
+            Wait(5000);
             capture.Start();
             for (int count = 0; count <= 60 * 60 * 1000; count++)
             {
@@ -172,11 +172,28 @@ namespace GameRecorder
             startinfomerge.RedirectStandardOutput = true;
             startinfomerge.FileName = "ffmpeg.exe";
             startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -c:a aac " + output;
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
             Process.Start(startinfomerge);
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
             File.Delete(outputvideo);
             File.Delete(outputaudio);
+        }
+        public static void Wait(int milliseconds)
+        {
+            var timer1 = new System.Windows.Forms.Timer();
+            timer1.Interval = milliseconds;
+            timer1.Enabled = true;
+            timer1.Start();
+            timer1.Tick += (s, e) =>
+            {
+                timer1.Enabled = false;
+                timer1.Stop();
+            };
+            while (timer1.Enabled)
+            {
+                Application.DoEvents();
+                Thread.Sleep(1);
+            }
         }
         private static void MinimizeConsoleWindow()
         {
