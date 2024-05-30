@@ -101,94 +101,82 @@ namespace GameRecorder
         {
             for (; ; )
             {
-                valchanged(0, GetAsyncKeyState(Keys.NumPad0));
-                valchanged(1, GetAsyncKeyState(Keys.Decimal));
-                if (wd[1] == 1 & !capturing)
+                valchanged(0, GetAsyncKeyState(Keys.Decimal));
+                valchanged(1, GetAsyncKeyState(Keys.NumPad0));
+                if (wd[0] == 1 & !capturing)
                 {
                     audioFileReader = new NAudio.Wave.MediaFoundationReader("1-hour-and-20-minutes-of-silence.mp3");
                     waveOutDevice = new NAudio.Wave.WaveOut();
                     waveOutDevice.Init(audioFileReader);
                     waveOutDevice.Play();
-                    capturing = true;
                     string localDate = DateTime.Now.ToString();
                     string name = localDate.Replace(" ", "-").Replace("/", "-").Replace(":", "-");
                     outputvideo = name + ".mkv";
                     outputaudio = name + ".wav";
                     output = name + ".mp4";
-                    Task.Run(() =>
-                    {
-                        startinfocapture = new ProcessStartInfo();
-                        startinfocapture.CreateNoWindow = false;
-                        startinfocapture.UseShellExecute = false;
-                        startinfocapture.RedirectStandardInput = true;
-                        startinfocapture.RedirectStandardOutput = true;
-                        startinfocapture.FileName = "ffmpeg.exe";
-                        if (cpuorgpu == "CPU")
-                            startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -crf 20 -ss 5 " + outputvideo;
-                        if (cpuorgpu == "GPU")
-                            startinfocapture.Arguments = @"-init_hw_device d3d11va -filter_complex ddagrab=0 -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -cq:v 20 -ss 5 " + outputvideo;
-                        try
-                        {
-                            processcapture = Process.Start(startinfocapture);
-                        }
-                        catch { }
-                    });
-                    Thread.Sleep(5000);
-                    Task.Run(() =>
-                    {
-                        CSCore.SoundIn.WasapiCapture capture = new CSCore.SoundIn.WasapiLoopbackCapture();
-                        capture.Initialize();
-                        CSCore.Codecs.WAV.WaveWriter wavewriter = new CSCore.Codecs.WAV.WaveWriter(outputaudio, capture.WaveFormat);
-                        capture.DataAvailable += (sound, card) =>
-                        {
-                            wavewriter.Write(card.Data, card.Offset, card.ByteCount);
-                        };
-                        capture.Start();
-                        for (int count = 0; count <= 60 * 60 * 1000; count++)
-                        {
-                            if (!capturing | count == 60 * 60 * 1000)
-                            {
-                                capture.Stop();
-                                wavewriter.Dispose();
-                                break;
-                            }
-                            Thread.Sleep(1);
-                        }
-                    });
+                    capturing = true;
+                    Task.Run(() => StartCapture());
                 }
                 else
                 {
-                    if (wd[0] == 1 & capturing)
+                    if (wd[1] == 1 & capturing)
                     {
                         capturing = false;
-                        waveOutDevice.Stop();
-                        Task.Run(() =>
-                        {
-                            try
-                            {
-                                processcapture.StandardInput.WriteLine('q');
-                            }
-                            catch { }
-                        });
-                        Task.Run(() =>
-                        {
-                            Thread.Sleep(10000);
-                            startinfomerge = new ProcessStartInfo();
-                            startinfomerge.CreateNoWindow = false;
-                            startinfomerge.UseShellExecute = false;
-                            startinfomerge.RedirectStandardInput = true;
-                            startinfomerge.RedirectStandardOutput = true;
-                            startinfomerge.FileName = "ffmpeg.exe";
-                            startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -c:a aac " + output;
-                            Process.Start(startinfomerge);
-                            Thread.Sleep(10000);
-                            File.Delete(outputvideo);
-                            File.Delete(outputaudio);
-                        });
+                        Task.Run(() => StopCapture());
                     }
                 }
                 Thread.Sleep(70);
             }
+        }
+        private static void StartCapture()
+        {
+            startinfocapture = new ProcessStartInfo();
+            startinfocapture.CreateNoWindow = false;
+            startinfocapture.UseShellExecute = false;
+            startinfocapture.RedirectStandardInput = true;
+            startinfocapture.RedirectStandardOutput = true;
+            startinfocapture.FileName = "ffmpeg.exe";
+            if (cpuorgpu == "CPU")
+                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -crf 20 -ss 5 " + outputvideo;
+            if (cpuorgpu == "GPU")
+                startinfocapture.Arguments = @"-init_hw_device d3d11va -filter_complex ddagrab=0 -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -cq:v 20 -ss 5 " + outputvideo;
+            CSCore.SoundIn.WasapiCapture capture = new CSCore.SoundIn.WasapiLoopbackCapture();
+            capture.Initialize();
+            CSCore.Codecs.WAV.WaveWriter wavewriter = new CSCore.Codecs.WAV.WaveWriter(outputaudio, capture.WaveFormat);
+            capture.DataAvailable += (sound, card) =>
+            {
+                wavewriter.Write(card.Data, card.Offset, card.ByteCount);
+            };
+            processcapture = Process.Start(startinfocapture);
+            Thread.Sleep(5000);
+            capture.Start();
+            for (int count = 0; count <= 60 * 60 * 1000; count++)
+            {
+                if (!capturing | count == 60 * 60 * 1000)
+                {
+                    capture.Stop();
+                    wavewriter.Dispose();
+                    break;
+                }
+                Thread.Sleep(1);
+            }
+        }
+        private static void StopCapture()
+        {
+            processcapture.StandardInput.WriteLine('q');
+            waveOutDevice.Stop();
+            startinfomerge = new ProcessStartInfo();
+            startinfomerge.CreateNoWindow = false;
+            startinfomerge.UseShellExecute = false;
+            startinfomerge.RedirectStandardInput = true;
+            startinfomerge.RedirectStandardOutput = true;
+            startinfomerge.FileName = "ffmpeg.exe";
+            startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -c:a aac " + output;
+            Thread.Sleep(10000);
+            Process.Start(startinfomerge);
+            Thread.Sleep(10000);
+            File.Delete(outputvideo);
+            File.Delete(outputaudio);
         }
         private static void MinimizeConsoleWindow()
         {
@@ -211,26 +199,8 @@ namespace GameRecorder
             if (capturing)
             {
                 capturing = false;
-                waveOutDevice.Stop();
-                try
-                {
-                    processcapture.StandardInput.WriteLine('q');
-                }
-                catch { }
-                Thread.Sleep(10000);
-                startinfomerge = new ProcessStartInfo();
-                startinfomerge.CreateNoWindow = true;
-                startinfomerge.UseShellExecute = false;
-                startinfomerge.RedirectStandardInput = false;
-                startinfomerge.RedirectStandardOutput = false;
-                startinfomerge.FileName = "ffmpeg.exe";
-                startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -c:a aac " + output;
-                Process.Start(startinfomerge);
-                Thread.Sleep(10000);
-                File.Delete(outputvideo);
-                File.Delete(outputaudio);
+                StopCapture();
             }
-            TimeEndPeriod(1);
         }
     }
 }
