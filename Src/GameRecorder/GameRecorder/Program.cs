@@ -39,7 +39,7 @@ namespace GameRecorder
         const Int32 SW_MINIMIZE = 6;
         static ConsoleEventDelegate handler;
         private delegate bool ConsoleEventDelegate(int eventType);
-        private static string outputvideo, outputaudio, output, cpuorgpu;
+        private static string outputvideo, outputaudio, output, cpuorgpu, audiodelay;
         private static bool capturing;
         private static Process processcapture;
         private static ProcessStartInfo startinfocapture, startinfomerge;
@@ -84,6 +84,8 @@ namespace GameRecorder
                 {
                     createdfile.ReadLine();
                     cpuorgpu = createdfile.ReadLine();
+                    createdfile.ReadLine();
+                    audiodelay = createdfile.ReadLine();
                 }
                 Task.Run(() => Start());
                 Console.ReadLine();
@@ -137,9 +139,9 @@ namespace GameRecorder
             startinfocapture.RedirectStandardOutput = true;
             startinfocapture.FileName = "ffmpeg.exe";
             if (cpuorgpu == "CPU")
-                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -crf 20 -ss 5 " + outputvideo;
+                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -crf 20 -ss 10 " + outputvideo;
             if (cpuorgpu == "GPU")
-                startinfocapture.Arguments = @"-init_hw_device d3d11va -filter_complex ddagrab=0 -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -cq:v 20 -ss 5 " + outputvideo;
+                startinfocapture.Arguments = @"-init_hw_device d3d11va -filter_complex ddagrab=0 -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -cq:v 20 -ss 10 " + outputvideo;
             CSCore.SoundIn.WasapiCapture capture = new CSCore.SoundIn.WasapiLoopbackCapture();
             capture.Initialize();
             CSCore.Codecs.WAV.WaveWriter wavewriter = new CSCore.Codecs.WAV.WaveWriter(outputaudio, capture.WaveFormat);
@@ -148,10 +150,7 @@ namespace GameRecorder
                 wavewriter.Write(card.Data, card.Offset, card.ByteCount);
             };
             Task.Run(() => processcapture = Process.Start(startinfocapture));
-            if (cpuorgpu == "CPU")
-                Wait(5000);
-            if (cpuorgpu == "GPU")
-                Wait(4000);
+            Wait(10000 + Convert.ToInt32(audiodelay));
             capture.Start();
             for (int count = 0; count <= 60 * 60 * 1000; count++)
             {
