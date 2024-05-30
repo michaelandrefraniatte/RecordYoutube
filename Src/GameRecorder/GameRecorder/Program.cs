@@ -165,15 +165,15 @@ namespace GameRecorder
         }
         private static void StopCapture()
         {
-            processcapture.StandardInput.WriteLine('q');
             waveOutDevice.Stop();
+            processcapture.StandardInput.WriteLine('q');
             startinfomerge = new ProcessStartInfo();
             startinfomerge.CreateNoWindow = false;
             startinfomerge.UseShellExecute = false;
             startinfomerge.RedirectStandardInput = true;
             startinfomerge.RedirectStandardOutput = true;
             startinfomerge.FileName = "ffmpeg.exe";
-            startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -c:a aac " + output;
+            startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -map 0:v -map 1:a -shortest -y " + output;
             Thread.Sleep(20000);
             Process.Start(startinfomerge);
             Thread.Sleep(20000);
