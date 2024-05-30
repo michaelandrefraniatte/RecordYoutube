@@ -172,7 +172,7 @@ namespace GameRecorder
                         });
                         Task.Run(() =>
                         {
-                            Thread.Sleep(5000);
+                            Thread.Sleep(10000);
                             startinfomerge = new ProcessStartInfo();
                             startinfomerge.CreateNoWindow = false;
                             startinfomerge.UseShellExecute = false;
@@ -181,7 +181,7 @@ namespace GameRecorder
                             startinfomerge.FileName = "ffmpeg.exe";
                             startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -c:a aac " + output;
                             Process.Start(startinfomerge);
-                            Thread.Sleep(5000);
+                            Thread.Sleep(10000);
                             File.Delete(outputvideo);
                             File.Delete(outputaudio);
                         });
@@ -217,7 +217,7 @@ namespace GameRecorder
                     processcapture.StandardInput.WriteLine('q');
                 }
                 catch { }
-                Thread.Sleep(5000);
+                Thread.Sleep(10000);
                 startinfomerge = new ProcessStartInfo();
                 startinfomerge.CreateNoWindow = true;
                 startinfomerge.UseShellExecute = false;
@@ -226,7 +226,7 @@ namespace GameRecorder
                 startinfomerge.FileName = "ffmpeg.exe";
                 startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -c:a aac " + output;
                 Process.Start(startinfomerge);
-                Thread.Sleep(5000);
+                Thread.Sleep(10000);
                 File.Delete(outputvideo);
                 File.Delete(outputaudio);
             }
