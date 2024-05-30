@@ -148,7 +148,10 @@ namespace GameRecorder
                 wavewriter.Write(card.Data, card.Offset, card.ByteCount);
             };
             Task.Run(() => processcapture = Process.Start(startinfocapture));
-            Wait(5000);
+            if (cpuorgpu == "CPU")
+                Wait(5000);
+            if (cpuorgpu == "GPU")
+                Wait(4000);
             capture.Start();
             for (int count = 0; count <= 60 * 60 * 1000; count++)
             {
