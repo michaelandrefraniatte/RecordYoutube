@@ -132,16 +132,6 @@ namespace GameRecorder
         }
         private static void StartCapture()
         {
-            startinfocapture = new ProcessStartInfo();
-            startinfocapture.CreateNoWindow = false;
-            startinfocapture.UseShellExecute = false;
-            startinfocapture.RedirectStandardInput = true;
-            startinfocapture.RedirectStandardOutput = true;
-            startinfocapture.FileName = "ffmpeg.exe";
-            if (cpuorgpu == "CPU")
-                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -ss 5 " + outputvideo;
-            if (cpuorgpu == "GPU")
-                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -ss 5 " + outputvideo;
             CSCore.SoundIn.WasapiCapture capture = new CSCore.SoundIn.WasapiLoopbackCapture();
             capture.Initialize();
             CSCore.Codecs.WAV.WaveWriter wavewriter = new CSCore.Codecs.WAV.WaveWriter(outputaudio, capture.WaveFormat);
@@ -149,9 +139,19 @@ namespace GameRecorder
             {
                 wavewriter.Write(card.Data, card.Offset, card.ByteCount);
             };
+            startinfocapture = new ProcessStartInfo();
+            startinfocapture.CreateNoWindow = false;
+            startinfocapture.UseShellExecute = false;
+            startinfocapture.RedirectStandardInput = true;
+            startinfocapture.RedirectStandardOutput = true;
+            startinfocapture.FileName = "ffmpeg.exe";
+            if (cpuorgpu == "CPU")
+                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 " + outputvideo;
+            if (cpuorgpu == "GPU")
+                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc " + outputvideo;
             Task.Run(() => processcapture = Process.Start(startinfocapture));
-            Wait(5000 + Convert.ToInt32(audiodelay));
-            capture.Start();
+            Wait(Convert.ToInt32(audiodelay));
+            Task.Run(() => capture.Start());
             for (int count = 0; count <= 60 * 60 * 1000; count++)
             {
                 if (!capturing | count == 60 * 60 * 1000)
@@ -165,8 +165,8 @@ namespace GameRecorder
         }
         private static void StopCapture()
         {
-            waveOutDevice.Stop();
-            processcapture.StandardInput.WriteLine('q');
+            Task.Run(() => waveOutDevice.Stop());
+            Task.Run(() => processcapture.StandardInput.WriteLine('q'));
             startinfomerge = new ProcessStartInfo();
             startinfomerge.CreateNoWindow = false;
             startinfomerge.UseShellExecute = false;
@@ -182,6 +182,8 @@ namespace GameRecorder
         }
         public static void Wait(int milliseconds)
         {
+            if (milliseconds <= 0)
+                return;
             var timer1 = new System.Windows.Forms.Timer();
             timer1.Interval = milliseconds;
             timer1.Enabled = true;
