@@ -39,7 +39,7 @@ namespace GameRecorder
         const Int32 SW_MINIMIZE = 6;
         static ConsoleEventDelegate handler;
         private delegate bool ConsoleEventDelegate(int eventType);
-        private static string outputvideo, outputaudio, output, cpuorgpu, audiodelay;
+        private static string outputvideo, outputaudio, output, cpuorgpu, audiodelay, commandcpu, commandgpu;
         private static bool capturing;
         private static Process processcapture;
         private static ProcessStartInfo startinfocapture, startinfomerge;
@@ -84,6 +84,10 @@ namespace GameRecorder
                 {
                     createdfile.ReadLine();
                     cpuorgpu = createdfile.ReadLine();
+                    createdfile.ReadLine();
+                    commandcpu = createdfile.ReadLine();
+                    createdfile.ReadLine();
+                    commandgpu = createdfile.ReadLine();
                     createdfile.ReadLine();
                     audiodelay = createdfile.ReadLine();
                 }
@@ -145,10 +149,11 @@ namespace GameRecorder
             startinfocapture.RedirectStandardInput = true;
             startinfocapture.RedirectStandardOutput = true;
             startinfocapture.FileName = "ffmpeg.exe";
+            object[] args = new object[] { outputvideo };
             if (cpuorgpu == "CPU")
-                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -rc-lookahead:v 0 -delay:v 0 -b:v 0 -cq:v 19 -zerolatency:v 1 " + outputvideo;
+                startinfocapture.Arguments = String.Format(commandcpu, args);
             if (cpuorgpu == "GPU")
-                startinfocapture.Arguments = @"-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -rc-lookahead:v 0 -delay:v 0 -b:v 0 -cq:v 19 -zerolatency:v 1 " + outputvideo;
+                startinfocapture.Arguments = String.Format(commandgpu, args);
             Task.Run(() => processcapture = Process.Start(startinfocapture));
             Wait(Convert.ToInt32(audiodelay));
             Task.Run(() => capture.Start());
