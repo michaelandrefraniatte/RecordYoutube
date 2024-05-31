@@ -105,7 +105,7 @@ namespace GameRecorder
                     if (valuechanged._ValueChanged[1] & valuechanged._valuechanged[1] & capturing)
                     {
                         capturing = false;
-                        StopCapture();
+                        Task.Run(() => StopCapture());
                     }
                 }
                 ValueChanged[2] = GetAsyncKeyState(Keys.F1);
