@@ -45,6 +45,8 @@ namespace GameRecorder
         private static ProcessStartInfo startinfocapturevideo, startinfomerge;
         private static NAudio.Wave.MediaFoundationReader audioFileReader;
         private static NAudio.Wave.IWavePlayer waveOutDevice;
+        private static CSCore.SoundIn.WasapiCapture captureaudio;
+        private static CSCore.Codecs.WAV.WaveWriter wavewriter;
         public static ThreadStart threadstart;
         public static Thread thread;
         public static uint CurrentResolution = 0;
@@ -111,16 +113,12 @@ namespace GameRecorder
                 valchanged(1, GetAsyncKeyState(Keys.NumPad0));
                 if (wd[0] == 1 & !capturing)
                 {
-                    audioFileReader = new NAudio.Wave.MediaFoundationReader("1-hour-and-20-minutes-of-silence.mp3");
-                    waveOutDevice = new NAudio.Wave.WaveOut();
-                    waveOutDevice.Init(audioFileReader);
-                    waveOutDevice.Play();
+                    capturing = true;
                     string localDate = DateTime.Now.ToString();
                     string name = localDate.Replace(" ", "-").Replace("/", "-").Replace(":", "-");
                     outputvideo = name + ".mkv";
                     outputaudio = name + ".wav";
                     output = name + ".mp4";
-                    capturing = true;
                     Task.Run(() => StartCapture());
                 }
                 else
@@ -128,7 +126,7 @@ namespace GameRecorder
                     if (wd[1] == 1 & capturing)
                     {
                         capturing = false;
-                        Task.Run(() => StopCapture());
+                        StopCapture();
                     }
                 }
                 Thread.Sleep(70);
@@ -136,6 +134,10 @@ namespace GameRecorder
         }
         private static void StartCapture()
         {
+            audioFileReader = new NAudio.Wave.MediaFoundationReader("1-hour-and-20-minutes-of-silence.mp3");
+            waveOutDevice = new NAudio.Wave.WaveOut();
+            waveOutDevice.Init(audioFileReader);
+            waveOutDevice.Play();
             Task.Run(() =>
             {
                 startinfocapturevideo = new ProcessStartInfo();
@@ -153,31 +155,26 @@ namespace GameRecorder
             });
             Task.Run(() =>
             {
-                CSCore.SoundIn.WasapiCapture captureaudio = new CSCore.SoundIn.WasapiLoopbackCapture();
+                captureaudio = new CSCore.SoundIn.WasapiLoopbackCapture();
                 captureaudio.Initialize();
-                CSCore.Codecs.WAV.WaveWriter wavewriter = new CSCore.Codecs.WAV.WaveWriter(outputaudio, captureaudio.WaveFormat);
+                wavewriter = new CSCore.Codecs.WAV.WaveWriter(outputaudio, captureaudio.WaveFormat);
                 captureaudio.DataAvailable += (sound, card) =>
                 {
                     wavewriter.Write(card.Data, card.Offset, card.ByteCount);
                 };
                 captureaudio.Start();
-                for (int count = 0; count <= 60 * 60 * 1000; count++)
-                {
-                    if (!capturing | count == 60 * 60 * 1000)
-                    {
-                        captureaudio.Stop();
-                        wavewriter.Dispose();
-                        break;
-                    }
-                    Thread.Sleep(1);
-                }
             });
         }
         private static void StopCapture()
         {
             Task.Run(() => processcapture.StandardInput.WriteLine('q'));
             Wait(audiodelay);
-            Task.Run(() => waveOutDevice.Stop());
+            Task.Run(() =>
+            {
+                captureaudio.Stop();
+                wavewriter.Dispose();
+                waveOutDevice.Stop();
+            });
             StreamReader errorreaderaudio;
             Process processdurationaudio = new Process();
             processdurationaudio.StartInfo.UseShellExecute = false;
