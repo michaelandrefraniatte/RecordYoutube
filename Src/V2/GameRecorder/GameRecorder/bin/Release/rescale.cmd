@@ -1,0 +1,1 @@
+ffmpeg -i outputcrop.mp4 -vf scale=1912:1080:flags=neighbor -b:v 15M outputrescale.mp4
