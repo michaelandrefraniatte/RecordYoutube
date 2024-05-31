@@ -172,14 +172,55 @@ namespace GameRecorder
         {
             Task.Run(() => waveOutDevice.Stop());
             Task.Run(() => processcapture.StandardInput.WriteLine('q'));
-            startinfomerge = new ProcessStartInfo();
-            startinfomerge.CreateNoWindow = false;
-            startinfomerge.UseShellExecute = false;
-            startinfomerge.RedirectStandardInput = true;
-            startinfomerge.RedirectStandardOutput = true;
-            startinfomerge.FileName = "ffmpeg.exe";
-            startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -map 0:v -map 1:a -shortest -y " + output;
+            StreamReader errorreaderaudio;
+            Process processdurationaudio = new Process();
+            processdurationaudio.StartInfo.UseShellExecute = false;
+            processdurationaudio.StartInfo.ErrorDialog = false;
+            processdurationaudio.StartInfo.RedirectStandardError = true;
+            processdurationaudio.StartInfo.FileName = "ffmpeg.exe";
+            processdurationaudio.StartInfo.Arguments = "-i " + outputaudio;
+            StreamReader errorreadervideo;
+            Process processdurationvideo = new Process();
+            processdurationvideo.StartInfo.UseShellExecute = false;
+            processdurationvideo.StartInfo.ErrorDialog = false;
+            processdurationvideo.StartInfo.RedirectStandardError = true;
+            processdurationvideo.StartInfo.FileName = "ffmpeg.exe";
+            processdurationvideo.StartInfo.Arguments = "-i " + outputvideo;
             Thread.Sleep(20000);
+            processdurationaudio.Start();
+            errorreaderaudio = processdurationaudio.StandardError;
+            processdurationaudio.WaitForExit();
+            string resultaudio = errorreaderaudio.ReadToEnd();
+            string durationaudio = resultaudio.Substring(resultaudio.IndexOf("Duration: ") + "Duration: ".Length, "00:00:00.00".Length);
+            processdurationvideo.Start();
+            errorreadervideo = processdurationvideo.StandardError;
+            processdurationvideo.WaitForExit();
+            string resultvideo = errorreadervideo.ReadToEnd();
+            string durationvideo = resultvideo.Substring(resultvideo.IndexOf("Duration: ") + "Duration: ".Length, "00:00:00.00".Length);
+            TimeSpan duration = DateTime.Parse(durationaudio).Subtract(DateTime.Parse(durationvideo));
+            string difference = duration.ToString();
+            if (difference.StartsWith("-"))
+            {
+                string soonervideo = difference.ToString().Substring(0, "-00:00:00.00".Length);
+                startinfomerge = new ProcessStartInfo();
+                startinfomerge.CreateNoWindow = false;
+                startinfomerge.UseShellExecute = false;
+                startinfomerge.RedirectStandardInput = true;
+                startinfomerge.RedirectStandardOutput = true;
+                startinfomerge.FileName = "ffmpeg.exe";
+                startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -map 0:v -map 1:a -shortest -y " + output;
+            }
+            else
+            {
+                string sooneraudio = difference.ToString().Substring(0, "00:00:00.00".Length);
+                startinfomerge = new ProcessStartInfo();
+                startinfomerge.CreateNoWindow = false;
+                startinfomerge.UseShellExecute = false;
+                startinfomerge.RedirectStandardInput = true;
+                startinfomerge.RedirectStandardOutput = true;
+                startinfomerge.FileName = "ffmpeg.exe";
+                startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -map 0:v -map 1:a -shortest -y " + output;
+            }
             Process.Start(startinfomerge);
             Thread.Sleep(20000);
             File.Delete(outputvideo);
