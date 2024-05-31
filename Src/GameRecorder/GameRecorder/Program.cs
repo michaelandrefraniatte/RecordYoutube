@@ -129,6 +129,9 @@ namespace GameRecorder
                         StopCapture();
                     }
                 }
+                valchanged(2, GetAsyncKeyState(Keys.F1));
+                if (wd[2] == 1)
+                    OnKeyDown(Keys.F1);
                 Thread.Sleep(70);
             }
         }
