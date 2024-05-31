@@ -151,7 +151,6 @@ namespace GameRecorder
                     startinfocapturevideo.Arguments = String.Format(commandgpu, args);
                 processcapture = Process.Start(startinfocapturevideo);
             });
-            Wait(Convert.ToInt32(audiodelay));
             Task.Run(() =>
             {
                 CSCore.SoundIn.WasapiCapture captureaudio = new CSCore.SoundIn.WasapiLoopbackCapture();
@@ -177,6 +176,7 @@ namespace GameRecorder
         private static void StopCapture()
         {
             Task.Run(() => processcapture.StandardInput.WriteLine('q'));
+            Wait(audiodelay);
             Task.Run(() => waveOutDevice.Stop());
             StreamReader errorreaderaudio;
             Process processdurationaudio = new Process();
@@ -235,23 +235,24 @@ namespace GameRecorder
             File.Delete(outputvideotemp);
             File.Delete(outputaudiotemp);
         }
-        public static void Wait(int milliseconds)
+        public static void Wait(string delay)
         {
-            if (milliseconds <= 0)
-                return;
-            var timer1 = new System.Windows.Forms.Timer();
-            timer1.Interval = milliseconds;
-            timer1.Enabled = true;
-            timer1.Start();
-            timer1.Tick += (s, e) =>
+            if (delay != "0")
             {
-                timer1.Enabled = false;
-                timer1.Stop();
-            };
-            while (timer1.Enabled)
-            {
-                Application.DoEvents();
-                Thread.Sleep(1);
+                var timer1 = new System.Windows.Forms.Timer();
+                timer1.Interval = Convert.ToInt32(delay);
+                timer1.Enabled = true;
+                timer1.Start();
+                timer1.Tick += (s, e) =>
+                {
+                    timer1.Enabled = false;
+                    timer1.Stop();
+                };
+                while (timer1.Enabled)
+                {
+                    Application.DoEvents();
+                    Thread.Sleep(1);
+                }
             }
         }
         private static void MinimizeConsoleWindow()
