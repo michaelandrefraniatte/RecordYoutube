@@ -39,7 +39,7 @@ namespace GameRecorder
         const Int32 SW_MINIMIZE = 6;
         static ConsoleEventDelegate handler;
         private delegate bool ConsoleEventDelegate(int eventType);
-        private static string outputvideo, outputaudio, output, cpuorgpu, audiodelay, commandcpu, commandgpu;
+        private static string outputvideo, outputaudio, output, outputvideotemp, outputaudiotemp, outputtemp, cpuorgpu, audiodelay, commandcpu, commandgpu;
         private static bool capturing;
         private static Process processcapture;
         private static ProcessStartInfo startinfocapture, startinfomerge;
@@ -186,6 +186,9 @@ namespace GameRecorder
             processdurationvideo.StartInfo.RedirectStandardError = true;
             processdurationvideo.StartInfo.FileName = "ffmpeg.exe";
             processdurationvideo.StartInfo.Arguments = "-i " + outputvideo;
+            outputaudiotemp = outputaudio;
+            outputvideotemp = outputvideo;
+            outputtemp = output;
             Thread.Sleep(20000);
             processdurationaudio.Start();
             errorreaderaudio = processdurationaudio.StandardError;
@@ -201,14 +204,14 @@ namespace GameRecorder
             string difference = duration.ToString();
             if (difference.StartsWith("-"))
             {
-                string soonervideo = difference.ToString().Substring(0, "-00:00:00.00".Length);
+                string soonervideo = difference.ToString().Substring(1, "00:00:00.00".Length);
                 startinfomerge = new ProcessStartInfo();
                 startinfomerge.CreateNoWindow = false;
                 startinfomerge.UseShellExecute = false;
                 startinfomerge.RedirectStandardInput = true;
                 startinfomerge.RedirectStandardOutput = true;
                 startinfomerge.FileName = "ffmpeg.exe";
-                startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -map 0:v -map 1:a -shortest -y " + output;
+                startinfomerge.Arguments = @"-ss " + soonervideo + "0 -t " + durationvideo + "0 -i " + outputvideotemp + " -ss 00:00:00.000 -t " + durationaudio + "0 -i " + outputaudiotemp + " -map 0:v:0 -map 1:a:0 -y " + outputtemp;
             }
             else
             {
@@ -219,12 +222,12 @@ namespace GameRecorder
                 startinfomerge.RedirectStandardInput = true;
                 startinfomerge.RedirectStandardOutput = true;
                 startinfomerge.FileName = "ffmpeg.exe";
-                startinfomerge.Arguments = @"-i " + outputvideo + " -i " + outputaudio + " -c:v copy -map 0:v -map 1:a -shortest -y " + output;
+                startinfomerge.Arguments = @"-ss 00:00:00.000 -t " + durationvideo + "0 -i " + outputvideotemp + " -ss " + sooneraudio + "0 -t " + durationaudio + "0 -i " + outputaudiotemp + " -map 0:v:0 -map 1:a:0 -y " + outputtemp;
             }
             Process.Start(startinfomerge);
             Thread.Sleep(20000);
-            File.Delete(outputvideo);
-            File.Delete(outputaudio);
+            File.Delete(outputvideotemp);
+            File.Delete(outputaudiotemp);
         }
         public static void Wait(int milliseconds)
         {
