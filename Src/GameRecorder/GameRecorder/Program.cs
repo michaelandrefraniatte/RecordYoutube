@@ -149,6 +149,9 @@ namespace GameRecorder
         }
         private static void StopCapture()
         {
+            outputaudiotemp = outputaudio;
+            outputvideotemp = outputvideo;
+            outputtemp = output;
             Task.Run(() => processcapture.StandardInput.WriteLine('q'));
             Wait(audiodelay);
             Task.Run(() =>
@@ -164,7 +167,7 @@ namespace GameRecorder
             processdurationaudio.StartInfo.ErrorDialog = false;
             processdurationaudio.StartInfo.RedirectStandardError = true;
             processdurationaudio.StartInfo.FileName = "ffmpeg.exe";
-            processdurationaudio.StartInfo.Arguments = "-i " + outputaudio;
+            processdurationaudio.StartInfo.Arguments = "-i " + outputaudiotemp;
             StreamReader errorreadervideo;
             Process processdurationvideo = new Process();
             processdurationvideo.StartInfo.CreateNoWindow = true;
@@ -172,10 +175,7 @@ namespace GameRecorder
             processdurationvideo.StartInfo.ErrorDialog = false;
             processdurationvideo.StartInfo.RedirectStandardError = true;
             processdurationvideo.StartInfo.FileName = "ffmpeg.exe";
-            processdurationvideo.StartInfo.Arguments = "-i " + outputvideo;
-            outputaudiotemp = outputaudio;
-            outputvideotemp = outputvideo;
-            outputtemp = output;
+            processdurationvideo.StartInfo.Arguments = "-i " + outputvideotemp;
             Thread.Sleep(20000);
             processdurationaudio.Start();
             errorreaderaudio = processdurationaudio.StandardError;
