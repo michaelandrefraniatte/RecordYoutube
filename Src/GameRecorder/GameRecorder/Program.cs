@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using ValueStateChanged;
 
 namespace GameRecorder
 {
@@ -50,29 +51,7 @@ namespace GameRecorder
         public static ThreadStart threadstart;
         public static Thread thread;
         public static uint CurrentResolution = 0;
-        public static int[] wd = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
-        public static int[] wu = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
-        public static bool[] ws = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
-        static void valchanged(int n, bool val)
-        {
-            if (val)
-            {
-                if (wd[n] <= 1)
-                {
-                    wd[n] = wd[n] + 1;
-                }
-                wu[n] = 0;
-            }
-            else
-            {
-                if (wu[n] <= 1)
-                {
-                    wu[n] = wu[n] + 1;
-                }
-                wd[n] = 0;
-            }
-            ws[n] = val;
-        }
+        private static valuechanged ValueChanged = new valuechanged();
         static void Main()
         {
             TimeBeginPeriod(1);
@@ -109,9 +88,9 @@ namespace GameRecorder
         {
             for (; ; )
             {
-                valchanged(0, GetAsyncKeyState(Keys.Decimal));
-                valchanged(1, GetAsyncKeyState(Keys.NumPad0));
-                if (wd[0] == 1 & !capturing)
+                ValueChanged[0] = GetAsyncKeyState(Keys.Decimal);
+                ValueChanged[1] = GetAsyncKeyState(Keys.NumPad0);
+                if (valuechanged._ValueChanged[0] & valuechanged._valuechanged[0] & !capturing)
                 {
                     capturing = true;
                     string localDate = DateTime.Now.ToString();
@@ -123,14 +102,14 @@ namespace GameRecorder
                 }
                 else
                 {
-                    if (wd[1] == 1 & capturing)
+                    if (valuechanged._ValueChanged[1] & valuechanged._valuechanged[1] & capturing)
                     {
                         capturing = false;
                         StopCapture();
                     }
                 }
-                valchanged(2, GetAsyncKeyState(Keys.F1));
-                if (wd[2] == 1)
+                ValueChanged[2] = GetAsyncKeyState(Keys.F1);
+                if (valuechanged._ValueChanged[2] & valuechanged._valuechanged[2])
                     OnKeyDown(Keys.F1);
                 Thread.Sleep(70);
             }
@@ -279,6 +258,26 @@ namespace GameRecorder
             {
                 capturing = false;
                 StopCapture();
+            }
+        }
+    }
+}
+namespace ValueStateChanged
+{
+    public class valuechanged
+    {
+        public static bool[] _valuechanged = { false, false, false };
+        public static bool[] _ValueChanged = { false, false, false };
+        public bool this[int index]
+        {
+            get { return _ValueChanged[index]; }
+            set
+            {
+                if (_valuechanged[index] != value)
+                    _ValueChanged[index] = true;
+                else
+                    _ValueChanged[index] = false;
+                _valuechanged[index] = value;
             }
         }
     }
