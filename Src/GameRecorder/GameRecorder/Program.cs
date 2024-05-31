@@ -180,6 +180,7 @@ namespace GameRecorder
             });
             StreamReader errorreaderaudio;
             Process processdurationaudio = new Process();
+            processdurationaudio.StartInfo.CreateNoWindow = true;
             processdurationaudio.StartInfo.UseShellExecute = false;
             processdurationaudio.StartInfo.ErrorDialog = false;
             processdurationaudio.StartInfo.RedirectStandardError = true;
@@ -187,6 +188,7 @@ namespace GameRecorder
             processdurationaudio.StartInfo.Arguments = "-i " + outputaudio;
             StreamReader errorreadervideo;
             Process processdurationvideo = new Process();
+            processdurationvideo.StartInfo.CreateNoWindow = true;
             processdurationvideo.StartInfo.UseShellExecute = false;
             processdurationvideo.StartInfo.ErrorDialog = false;
             processdurationvideo.StartInfo.RedirectStandardError = true;
