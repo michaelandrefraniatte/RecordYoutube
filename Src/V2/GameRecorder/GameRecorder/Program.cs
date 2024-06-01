@@ -173,7 +173,7 @@ namespace GameRecorder
                 wavewriter.Dispose();
                 waveOutDevice.Stop();
             });
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
             processmerge = new Process();
             processmerge.StartInfo.CreateNoWindow = true;
             processmerge.StartInfo.UseShellExecute = false;
@@ -181,7 +181,7 @@ namespace GameRecorder
             processmerge.StartInfo.RedirectStandardInput = true;
             processmerge.StartInfo.RedirectStandardError = true;
             processmerge.StartInfo.FileName = "ffmpeg.exe";
-            processmerge.StartInfo.Arguments = @"-ss " + ss + " -i " + outputvideotemp + " -i " + outputaudiotemp + " -c copy " + outputtemp;
+            processmerge.StartInfo.Arguments = @"-ss " + ss + " -i " + outputvideotemp + " -i " + outputaudiotemp + " -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 " + outputtemp;
             processmerge.Start();
             errorreadermerge = processmerge.StandardError;
             string resultmerge = errorreadermerge.ReadToEnd();
