@@ -40,7 +40,7 @@ namespace GameRecorder
         const Int32 SW_MINIMIZE = 6;
         static ConsoleEventDelegate handler;
         private delegate bool ConsoleEventDelegate(int eventType);
-        private static string outputvideo, outputaudio, output, outputvideotemp, outputaudiotemp, outputtemp, cpuorgpu, commandcpu, commandgpu;
+        private static string outputvideo, outputaudio, output, outputvideotemp, outputaudiotemp, outputtemp, cpuorgpu, commandcpu, commandgpu, videodelay, ss;
         private static bool capturing;
         private static NAudio.Wave.MediaFoundationReader audioFileReader;
         private static NAudio.Wave.IWavePlayer waveOutDevice;
@@ -69,7 +69,13 @@ namespace GameRecorder
                     commandcpu = createdfile.ReadLine();
                     createdfile.ReadLine();
                     commandgpu = createdfile.ReadLine();
+                    createdfile.ReadLine();
+                    videodelay = createdfile.ReadLine();
                 }
+                double ticks = double.Parse(videodelay);
+                TimeSpan time = TimeSpan.FromMilliseconds(ticks);
+                DateTime datetime = new DateTime(time.Ticks);
+                ss = datetime.ToString("HH:mm:ss.fff");
                 Task.Run(() => Start());
                 Console.ReadLine();
             }
@@ -175,14 +181,11 @@ namespace GameRecorder
             processmerge.StartInfo.RedirectStandardInput = true;
             processmerge.StartInfo.RedirectStandardError = true;
             processmerge.StartInfo.FileName = "ffmpeg.exe";
-            processmerge.StartInfo.Arguments = @"-i " + outputvideotemp + " -i " + outputaudiotemp + " -c copy " + outputtemp;
+            processmerge.StartInfo.Arguments = @"-ss " + ss + " -i " + outputvideotemp + " -i " + outputaudiotemp + " -c copy " + outputtemp;
             processmerge.Start();
             errorreadermerge = processmerge.StandardError;
             string resultmerge = errorreadermerge.ReadToEnd();
             Console.WriteLine(resultmerge);
-            Thread.Sleep(20000);
-            File.Delete(outputvideotemp);
-            File.Delete(outputaudiotemp);
         }
         private static void MinimizeConsoleWindow()
         {
