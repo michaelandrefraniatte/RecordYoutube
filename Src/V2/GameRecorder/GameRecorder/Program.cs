@@ -56,7 +56,6 @@ namespace GameRecorder
         {
             TimeBeginPeriod(1);
             NtSetTimerResolution(1, true, ref CurrentResolution);
-            MinimizeConsoleWindow();
             handler = new ConsoleEventDelegate(ConsoleEventCallback);
             SetConsoleCtrlHandler(handler, true);
             if (!AlreadyRunning())
@@ -77,7 +76,15 @@ namespace GameRecorder
                 DateTime datetime = new DateTime(time.Ticks);
                 ss = datetime.ToString("HH:mm:ss.fff");
                 Task.Run(() => Start());
-                Console.ReadLine();
+                if (!File.Exists("ffmpeg.exe"))
+                {
+                    MessageBox.Show("Not existing ffmpeg.exe! Please copy/paste ffmpeg.exe from the zip folder in this program folder, sorry closing.");
+                }
+                else
+                {
+                    MinimizeConsoleWindow();
+                    Console.ReadLine();
+                }
             }
         }
         public static bool AlreadyRunning()
