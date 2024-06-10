@@ -1,0 +1,27 @@
+<ul>
+                            <li>With ffmpeg you can paste several videos one after the others.</li>
+                            Make input.txt containing the following:
+                            <ul>
+                                file 'input1.mp4'<br />
+                                file 'input2.mp4'<br />
+                                file 'input3.mp4'<br />
+                            </ul>
+                            Concatenate:
+                            <ul>
+                                ffmpeg -f concat -i input.txt -c copy output.mp4
+                            </ul>
+                            <li>With ffmpeg you can crop in time a video without the need of an encoder useless for this
+                                purpose:</li>
+                            ffmpeg -ss 00:01:00 -to 00:02:00 -i input.mp4 -c copy output.mp4
+                            <li>You can convert the output AVI video to a output MP4 video and display it with a HTML
+                                file:</li>
+                            ffmpeg -i output.avi -c:v copy -c:a copy output.mp4<br />
+                            &lt;video controls width="400"&gt;&lt;source src="output.mp4"
+                            type="video/mp4"&gt;&lt;/video&gt;<br />
+                            <li>You can convert the output MP4 video to a short 9:16 ratio MP4 video and display it with
+                                a HTML
+                                file to create a Youtube short:</li>
+                            ffmpeg -i output.mp4 -vf crop=ih*(9/16):ih short.mp4<br />
+                            &lt;iframe src="short.mp4" frameborder="0" width="480" height="860"
+                            allowfullscreen&gt;&lt;/iframe&gt;<br />
+</ul>
