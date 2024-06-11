@@ -3,6 +3,6 @@ CPU
 // Command CPU
 -filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v libx264 -crf 0 {0}
 // Command GPU
--filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -offset_x 0 -offset_y 0 -video_size 1920x1080 -c:v h264_nvenc -crf 0 {0}
+-init_hw_device d3d11va -filter_complex ddagrab=0 -c:v h264_nvenc -cq:v 1 -preset p7 -b:v 30000k -bufsize 90000k {0}
 // Video delay
 500
