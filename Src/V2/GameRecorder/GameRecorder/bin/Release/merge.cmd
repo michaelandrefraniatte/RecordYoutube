@@ -1,0 +1,1 @@
+ffmpeg -i input.mkv -i input.wav -c:v copy -map 0:v -map 1:a -shortest -y output.mp4
