@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using ValueStateChanged;
 using Accord.Video.FFMPEG;
 using System.Drawing;
+using System.Timers;
 
 namespace GameRecorder
 {
     class Program
     {
-        static void OnKeyDown(Keys keyData)
+        static void OnKeyDown(System.Windows.Forms.Keys keyData)
         {
-            if (keyData == Keys.F1)
+            if (keyData == System.Windows.Forms.Keys.F1)
             {
                 const string message = "• Author: Michaël André Franiatte.\n\r\n\r• Contact: michael.franiatte@gmail.com.\n\r\n\r• Publisher: https://github.com/michaelandrefraniatte.\n\r\n\r• Copyrights: All rights reserved, no permissions granted.\n\r\n\r• License: Not open source, not free of charge to use.";
                 const string caption = "About";
-                MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                System.Windows.Forms.MessageBox.Show(message, caption, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
             }
         }
         [DllImport("advapi32.dll")]
@@ -30,7 +30,7 @@ namespace GameRecorder
         [DllImport("ntdll.dll", EntryPoint = "NtSetTimerResolution")]
         public static extern void NtSetTimerResolution(uint DesiredResolution, bool SetResolution, ref uint CurrentResolution);
         [DllImport("user32.dll")]
-        public static extern bool GetAsyncKeyState(Keys vKey);
+        public static extern bool GetAsyncKeyState(System.Windows.Forms.Keys vKey);
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
@@ -41,7 +41,7 @@ namespace GameRecorder
         const Int32 SW_MINIMIZE = 6;
         static ConsoleEventDelegate handler;
         private delegate bool ConsoleEventDelegate(int eventType);
-        private static System.Windows.Forms.Timer timer1;
+        private static Timer timer1;
         private static VideoFileWriter vf;
         private static Bitmap bp;
         private static Graphics gr;
@@ -55,7 +55,7 @@ namespace GameRecorder
         private static Process processmerge;
         public static System.Threading.ThreadStart threadstart;
         public static System.Threading.Thread thread;
-        private static int width = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width, height = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+        private static int width = 800, height = 600;
         public static uint CurrentResolution = 0;
         private static valuechanged ValueChanged = new valuechanged();
         static void Main()
@@ -78,7 +78,7 @@ namespace GameRecorder
                 Task.Run(() => Start());
                 if (!File.Exists("ffmpeg.exe"))
                 {
-                    MessageBox.Show("Not existing ffmpeg.exe! Please copy/paste ffmpeg.exe from the zip folder in this program folder, sorry closing.");
+                    System.Windows.Forms.MessageBox.Show("Not existing ffmpeg.exe! Please copy/paste ffmpeg.exe from the zip folder in this program folder, sorry closing.");
                 }
                 else
                 {
@@ -99,8 +99,8 @@ namespace GameRecorder
         {
             for (; ; )
             {
-                ValueChanged[0] = GetAsyncKeyState(Keys.Decimal);
-                ValueChanged[1] = GetAsyncKeyState(Keys.NumPad0);
+                ValueChanged[0] = GetAsyncKeyState(System.Windows.Forms.Keys.Decimal);
+                ValueChanged[1] = GetAsyncKeyState(System.Windows.Forms.Keys.NumPad0);
                 if (valuechanged._ValueChanged[0] & valuechanged._valuechanged[0] & !capturing)
                 {
                     capturing = true;
@@ -119,9 +119,9 @@ namespace GameRecorder
                         Task.Run(() => StopCapture());
                     }
                 }
-                ValueChanged[2] = GetAsyncKeyState(Keys.F1);
+                ValueChanged[2] = GetAsyncKeyState(System.Windows.Forms.Keys.F1);
                 if (valuechanged._ValueChanged[2] & valuechanged._valuechanged[2])
-                    OnKeyDown(Keys.F1);
+                    OnKeyDown(System.Windows.Forms.Keys.F1);
                 System.Threading.Thread.Sleep(70);
             }
         }
@@ -140,20 +140,21 @@ namespace GameRecorder
                 {
                     wavewriter.Write(card.Data, card.Offset, card.ByteCount);
                 };
-                timer1 = new System.Windows.Forms.Timer();
-                timer1.Interval = 20;
-                timer1.Tick += timer1_Tick;
+                timer1 = new Timer(20);
+                timer1.Enabled = true;
+                timer1.Elapsed += new ElapsedEventHandler(timer_Elapsed);
                 vf = new VideoFileWriter();
-                vf.Open(outputvideo, width, height, 24, VideoCodec.H264, 1000000);
+                vf.Open(outputvideo, width, height, 24, VideoCodec.MPEG4, 1000000);
                 timer1.Start();
                 captureaudio.Start();
             });
         }
-        private static void timer1_Tick(object sender, EventArgs e)
+        private static void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             bp = new Bitmap(width, height);
             gr = Graphics.FromImage(bp);
             gr.CopyFromScreen(0, 0, 0, 0, new Size(width, height));
+            bp.Save("test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
             vf.WriteVideoFrame(bp);
         }
         private static void StopCapture()
