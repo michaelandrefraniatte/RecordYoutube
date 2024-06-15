@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordYoutube", "RecordYoutube\RecordYoutube.csproj", "{7BC32C2C-85DA-4585-8BBF-448674A90606}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Debug|x86.ActiveCfg = Debug|x86
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Debug|x86.Build.0 = Debug|x86
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Release|Any CPU.ActiveCfg = Release|x86
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Release|Any CPU.Build.0 = Release|x86
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Release|x86.ActiveCfg = Release|x86
+		{7BC32C2C-85DA-4585-8BBF-448674A90606}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A37A92A-3002-40E3-A00F-49E2880DD0BB}
+	EndGlobalSection
+EndGlobal
