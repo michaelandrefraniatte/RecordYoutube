@@ -31,7 +31,6 @@ namespace RecordYoutube
         public static extern void NtSetTimerResolution(uint DesiredResolution, bool SetResolution, ref uint CurrentResolution);
         [DllImport("user32.dll")]
         public static extern bool GetAsyncKeyState(System.Windows.Forms.Keys vKey);
-        private static Timer timer1;
         private static VideoFileWriter vf;
         private static Bitmap bp;
         private static Graphics gr;
@@ -50,27 +49,26 @@ namespace RecordYoutube
         private static valuechanged ValueChanged = new valuechanged();
         private void button1_Click(object sender, EventArgs e)
         {
-            timer1 = new Timer();
-            timer1.Interval = 20;
-            timer1.Enabled = true;
-            timer1.Tick += timer1_Tick;
+            capturing = true;
             vf = new VideoFileWriter();
             vf.Open("output.avi", 800, 600, 25, VideoCodec.MPEG4, 1000000);
-            timer1.Start();
+            Task.Run(() => CaptureScreen());
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            timer1.Stop();
+            capturing = false;
             vf.Close();
         }
-        private void timer1_Tick(object sender, EventArgs e)
+        private void CaptureScreen()
         {
-            bp = new Bitmap(800, 600);
-            gr = Graphics.FromImage(bp);
-            gr.CopyFromScreen(0, 0, 0, 0, new Size(bp.Width, bp.Height));
-            pictureBox1.Image = bp;
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            vf.WriteVideoFrame(bp);
+            while (capturing)
+            {
+                bp = new Bitmap(800, 600);
+                gr = Graphics.FromImage(bp);
+                gr.CopyFromScreen(0, 0, 0, 0, new Size(bp.Width, bp.Height));
+                vf.WriteVideoFrame(bp);
+                System.Threading.Thread.Sleep(20);
+            }
         }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
