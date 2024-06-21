@@ -1,0 +1,1 @@
+ffmpeg -i output.mp4 -vf scale=1912:1080:flags=neighbor outputrescale.mp4

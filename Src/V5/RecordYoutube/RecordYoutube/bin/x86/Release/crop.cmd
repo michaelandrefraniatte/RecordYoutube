@@ -1,0 +1,1 @@
+ffmpeg -ss 00:01:38.000 -to 00:02:22.000 -i outputrescale.mp4 -c copy outputcrop.mp4

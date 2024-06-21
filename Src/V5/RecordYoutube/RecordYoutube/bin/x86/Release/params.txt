@@ -1,0 +1,8 @@
+// Use CPU or GPU
+GPU
+// Command CPU
+-filter_complex ddagrab=0,hwdownload,format=bgra -framerate 30 -c:v libx264 -crf 1 {0}
+// Command GPU
+-init_hw_device d3d11va -filter_complex ddagrab=0,hwdownload,format=bgra -c:v h264_nvenc -cq:v 1 -preset p7 -tune hq -pix_fmt yuv444p {0}
+// Video delay
+500

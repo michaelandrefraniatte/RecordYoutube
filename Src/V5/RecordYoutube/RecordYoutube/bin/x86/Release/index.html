@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="description" content="test.">
+        <meta name="keywords" content="test">
+        <meta name="author" content="MICHAEL ANDRE FRANIATTE">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>test by michael franiatte</title>
+
+    </head>
+
+    <body>
+        <embed id="video" src="output.mp4" type="video/mp4" autoplay="1" autostart="1" width="800" height="600">
+        <embed id="audio" src="output.wav" type="audio/wav" autoplay="1" autostart="1">
+            <button onclick="play()">Play</button>
+
+        <script>
+
+            function play() {
+                document.getElementById('audio').play();
+                document.getElementById('video').play();
+            }
+
+        </script>
+    </body>
+
+</html>
