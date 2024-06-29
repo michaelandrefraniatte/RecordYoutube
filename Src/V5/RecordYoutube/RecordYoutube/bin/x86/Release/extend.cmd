@@ -1,0 +1,1 @@
+ffmpeg -i input.mp4 -c:a copy -c:v libx264 -vf "pad=width=1280:height=720:x=-1:y=-1:color=black" output.mp4

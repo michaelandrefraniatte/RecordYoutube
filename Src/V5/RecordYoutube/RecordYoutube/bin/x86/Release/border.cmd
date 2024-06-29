@@ -1,0 +1,1 @@
+ffmpeg -i input.mp4 -i overlay.png -filter_complex overlay -c:v libx264 output.mp4
